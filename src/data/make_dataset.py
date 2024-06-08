@@ -72,6 +72,10 @@ for f in files:
 # Working with datetimes
 # --------------------------------------------------------------
 
+acc_df.info()
+
+pd.to_datetime(df["epoch (ms)"], unit="ms")
+pd.to_datetime(df["time (01:00)"])
 
 # --------------------------------------------------------------
 # Turn into function
