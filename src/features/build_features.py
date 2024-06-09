@@ -9,6 +9,16 @@ from TemporalAbstraction import NumericalAbstraction
 # Load data
 # --------------------------------------------------------------
 
+df = pd.read_pickle("../../data/interim/02_outliers_removed_chauvenets.pkl")
+
+predictor_columns = list(df.columns[:6])
+
+# Plot settings
+plt.style.use("fivethirtyeight")
+plt.rcParams["figure.figsize"] = (20, 5)
+plt.rcParams["figure.dpi"] = 100
+plt.rcParams["lines.linewidth"] = 2
+
 
 # --------------------------------------------------------------
 # Dealing with missing values (imputation)
