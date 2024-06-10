@@ -120,12 +120,33 @@ subset = df_squared[df_squared["set"] == 16]
 
 subset[["acc_r", "gyr_r"]].plot(subplots=True)
 
-df_squared
-
 # --------------------------------------------------------------
 # Temporal abstraction
 # --------------------------------------------------------------
 
+df_temporal = df_squared.copy()
+NumAbs = NumericalAbstraction()
+
+predictor_columns = predictor_columns + ["acc_r", "gyr_r"]
+
+ws = int(1000 / 200)
+
+for col in predictor_columns:
+    df_temporal = NumAbs.abstract_numerical(df_temporal, [col], ws, "mean")
+    df_temporal = NumAbs.abstract_numerical(df_temporal, [col], ws, "std")
+
+df_temporal_list = []
+for s in df_temporal["set"].unique():
+    subset = df_temporal[df_temporal["set"] == s].copy()
+    for col in predictor_columns:
+        subset = NumAbs.abstract_numerical(subset, [col], ws, "mean")
+        subset = NumAbs.abstract_numerical(subset, [col], ws, "std")
+    df_temporal_list.append(subset)
+
+df_temporal = pd.concat(df_temporal_list)
+
+subset[["acc_y", "acc_y_temp_mean_ws_5", "acc_y_temp_std_ws_5"]].plot()
+subset[["gyr_y", "gyr_y_temp_mean_ws_5", "gyr_y_temp_std_ws_5"]].plot()
 
 # --------------------------------------------------------------
 # Frequency features
