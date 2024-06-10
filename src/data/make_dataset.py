@@ -102,6 +102,7 @@ data_resampled = pd.concat(
 
 data_resampled["set"] = data_resampled["set"].astype("int")
 data_resampled.info()
+data_resampled[:10]
 
 # --------------------------------------------------------------
 # Export dataset
