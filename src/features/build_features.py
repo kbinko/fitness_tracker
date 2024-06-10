@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from DataTransformation import LowPassFilter, PrincipalComponentAnalysis
 from TemporalAbstraction import NumericalAbstraction
+from FrequencyAbstraction import FourierTransformation
 
 
 # --------------------------------------------------------------
@@ -70,7 +71,7 @@ cutoff = 1.3
 df_lowpass = LowPass.low_pass_filter(df_lowpass, "acc_y", fs, cutoff, order=5)
 
 subset = df_lowpass[df_lowpass["set"] == 35]
-print(subset["label"][0])
+print(subset["label"].iloc[0])
 
 fig, ax = plt.subplots(nrows=2, sharex=True, figsize=(20, 10))
 ax[0].plot(subset["acc_y"].reset_index(drop=True), label="raw data")
@@ -152,6 +153,36 @@ subset[["gyr_y", "gyr_y_temp_mean_ws_5", "gyr_y_temp_std_ws_5"]].plot()
 # Frequency features
 # --------------------------------------------------------------
 
+df_freq = df_temporal.copy().reset_index()
+FreqAbs = FourierTransformation()
+
+fs = int(1000 / 200)
+ws = int(2800 / 200)
+
+df_freq = FreqAbs.abstract_frequency(df_freq, ["acc_y"], ws, fs)
+
+# Visualize results
+
+subset = df_freq[df_freq["set"] == 15]
+subset[["acc_y"]].plot()
+subset[
+    [
+        "acc_y_max_freq",
+        "acc_y_freq_weighted",
+        "acc_y_pse",
+        "acc_y_freq_1.429_Hz_ws_14",
+        "acc_y_freq_2.5_Hz_ws_14",
+    ]
+].plot()
+
+df_freq_list = []
+for s in df_freq["set"].unique():
+    print(f"Applying Fourier transformations to set {s}")
+    subset = df_freq[df_freq["set"] == s].reset_index(drop=True).copy()
+    subset = FreqAbs.abstract_frequency(subset, predictor_columns, ws, fs)
+    df_freq_list.append(subset)
+
+df_freq = pd.concat(df_freq_list).set_index("epoch (ms)", drop=True)
 
 # --------------------------------------------------------------
 # Dealing with overlapping windows

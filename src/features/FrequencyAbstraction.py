@@ -64,6 +64,7 @@ class FourierTransformation:
                 ) / np.sum(real_ampl)
                 PSD = np.divide(np.square(real_ampl), float(len(real_ampl)))
                 PSD_pdf = np.divide(PSD, np.sum(PSD))
+                PSD_pdf = PSD_pdf + np.finfo(float).eps
                 data_table.loc[i, col + "_pse"] = -np.sum(np.log(PSD_pdf) * PSD_pdf)
 
         return data_table
